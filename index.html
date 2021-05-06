@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="estilos.css">
+  <title>Gestion</title>
+</head>
+    <body>
+
+    <?php
+    require_once 'logica/conexion.php';
+    session_start();
+    $usuario = $_SESSION['username'];
+    ?>
+
+<!-- NAVBAR (USUARIOS - GESTION) -->
+   
+  <p>
+    <a class="button" href="usuarios.php"> Usuarios</a>
+    <a class="button" href='logica/salir.php' value="Salir">Salir</a>
+  </p>
+
+
+    <?php
+    
+    echo "<center><h1> ¡Bienvenido <b>$usuario</b>!</center>";
+
+    $select = "SELECT * FROM tareas";
+    $query = mysqli_query($conexion, $select);
+    $array = [];
+
+    if (mysqli_num_rows($query) > 0){
+      while($row = mysqli_fetch_array($query)){
+        array_push($array,$row);
+      }
+    }
+    ?>
+   
+  <br>  
+  <center> <table>
+  <h1>Tabla de proyectos</h1>
+  
+  <!--CREAR PROYECTO-->
+    <input class="button" type="button" value="Agregar nuevo proyecto" onclick="location='agregar_proyecto.php'"/><br><br>
+  
+    <thead>
+            <tr>
+              <th> ID </th>
+              <th> Proyecto </th>
+              <th> Titulo </th>
+              <th> Usuario </th>
+              <th> Fecha limite </th>
+              <th> Avance (%) </th>
+              <th> Acciones </th>
+          </tr>
+          
+        <?php
+        foreach ($array as $tarea){
+          echo'<tr>';
+          echo "<td><label  name= 'Tarea'>{$tarea['id_tarea']}</label></td>";
+          echo "<td><label  name= 'Descripcion'>{$tarea['proyecto']}</label></td>";
+          echo "<td><label  name= 'Titulo'>{$tarea['titulo']}</label></td>";
+          echo "<td><label  name= 'Usuario'>{$tarea['id_usuario']}</label></td>";
+          echo "<td><label  name= 'FechaLimite'>{$tarea['fecha_limite']}</label></td>";
+          echo "<td><label  name= 'Avance'>{$tarea['avance']}</label></td>";
+          ?>
+          <td><input type='button'  onclick="irModificar(<?php echo $tarea['id_tarea'];?>)" value='Edit'>
+          <input type='button' onclick="irBorrar(<?php echo $tarea['id_tarea'];?>)" value='Borrar'>
+        <?php
+          echo'</tr>';
+        }
+
+        ?>
+            <script>
+            function irModificar(proyecto){
+
+              location.href="modificar_proyecto.php?Tarea="+proyecto;
+            }
+
+            function irBorrar(proyecto){
+
+            location.href="eliminar_proyecto.php?id_tarea="+proyecto;
+            }
+            </script>
+        </table>
+    </body>
+</html>
